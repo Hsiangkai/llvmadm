@@ -52,15 +52,15 @@ def create_lbranch(branch):
     if not branch in branches:
         return False
 
-    subprocess.run("git checkout -b {} origin/{}".format(branch, branch),
+    subprocess.call("git checkout -b {} origin/{}".format(branch, branch),
             shell=True)
     return True
 
 def checkout_lbranch(branch):
-    subprocess.run("git checkout {}".format(branch), shell=True)
+    subprocess.call("git checkout {}".format(branch), shell=True)
 
 def clone_project(project):
-    subprocess.run("git clone {}".format(llvm_repo[project]), shell=True)
+    subprocess.call("git clone {}".format(llvm_repo[project]), shell=True)
     return
 
 def checkout(branch):
@@ -97,21 +97,21 @@ def checkout(branch):
 def update():
     # update LLVM source first
     os.chdir(llvm_source)
-    subprocess.run("git pull --rebase", shell=True)
+    subprocess.call("git pull --rebase", shell=True)
 
     # update tools subtree
     for tool in tools:
         tool_dir = os.path.join(llvm_source, "tools", tool)
         if os.path.isdir(tool_dir):
             os.chdir(tool_dir)
-            subprocess.run("git pull --rebase", shell=True)
+            subprocess.call("git pull --rebase", shell=True)
 
     # update projects subtree
     for project in projects:
         project_dir = os.path.join(llvm_source, "projects", project)
         if os.path.isdir(project_dir):
             os.chdir(project_dir)
-            subprocess.run("git pull --rebase", shell=True)
+            subprocess.call("git pull --rebase", shell=True)
 
     return
 
@@ -128,7 +128,7 @@ def build(prefix, debug, clean):
         os.mkdir(build_dir)
         build_dir_empty = True
 
-    # The possible values include Debug, Release, RelWithDebInfo, 
+    # The possible values include Debug, Release, RelWithDebInfo,
     # and MinSizeRel. Only support Release and Debug now.
     build_type = 'Release'
     if debug:
@@ -136,10 +136,10 @@ def build(prefix, debug, clean):
 
     os.chdir(build_dir)
     if build_dir_empty:
-        subprocess.run(cmake_command.format(prefix, build_type, llvm_source), shell=True)
+        subprocess.call(cmake_command.format(prefix, build_type, llvm_source), shell=True)
 
-    subprocess.run("make -j4", shell=True)
-    subprocess.run("make install", shell=True)
+    subprocess.call("make -j4", shell=True)
+    subprocess.call("make install", shell=True)
 
     return
 
