@@ -8,7 +8,7 @@ import subprocess
 tools = ['clang', 'lld']
 projects = ['compiler-rt', 'test-suite', 'libcxxabi', 'libcxx', 'libunwind']
 llvm_source=os.getcwd()
-cmake_command = 'cmake -DCMAKE_INSTALL_PREFIX={} -DCMAKE_BUILD_TYPE={} -G "Unix Makefiles" {}'
+cmake_command = 'cmake -DCMAKE_INSTALL_PREFIX={} -DLLVM_TARGETS_TO_BUILD={} -DCMAKE_BUILD_TYPE={} -G "Unix Makefiles" {}'
 
 llvm_repo = {'clang': 'https://github.com/llvm-mirror/clang.git',
         'lld': 'https://github.com/llvm-mirror/lld.git',
@@ -117,8 +117,8 @@ def update():
 
     return
 
-def build(prefix, debug, clean):
-    build_dir = os.path.join(llvm_source, 'build')
+def build(prefix, buildpath, targets, debug, clean):
+    build_dir = os.path.join(llvm_source, buildpath)
     build_dir_empty = False
 
     if clean:
@@ -130,7 +130,7 @@ def build(prefix, debug, clean):
         os.mkdir(build_dir)
         build_dir_empty = True
 
-    # The possible values include Debug, Release, RelWithDebInfo,
+    # The possible values include Debug, Release, RelWithDebInfo, 
     # and MinSizeRel. Only support Release and Debug now.
     build_type = 'Release'
     if debug:
@@ -138,7 +138,7 @@ def build(prefix, debug, clean):
 
     os.chdir(build_dir)
     if build_dir_empty:
-        subprocess.call(cmake_command.format(prefix, build_type, llvm_source), shell=True)
+        subprocess.call(cmake_command.format(prefix, targets, build_type, llvm_source), shell=True)
 
     subprocess.call("make -j4", shell=True)
     subprocess.call("make install", shell=True)
@@ -160,6 +160,8 @@ if __name__ == '__main__':
     sub_parser = sub_parsers.add_parser('build',
             help='build LLVM')
     sub_parser.add_argument('--prefix', default='$HOME/llvm-dev')
+    sub_parser.add_argument('--buildpath', default='build')
+    sub_parser.add_argument('--targets', default='all')
     sub_parser.add_argument('--debug', action='store_true')
     sub_parser.add_argument('--clean', action='store_true')
 
@@ -169,6 +171,6 @@ if __name__ == '__main__':
     elif args.command == 'checkout':
         checkout(args.branch)
     elif args.command == 'build':
-        build(args.prefix, args.debug, args.clean)
+        build(args.prefix, args.buildpath, args.targets, args.debug, args.clean)
     else:
         assert False, 'unexpected command {!r}'.format(args.command)
