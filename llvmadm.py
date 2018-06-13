@@ -5,16 +5,18 @@
 import argparse, shutil, os
 import subprocess
 
-tools = ['clang', 'lldb', 'lld']
-projects = ['compiler-rt', 'test-suite']
+tools = ['clang', 'lld']
+projects = ['compiler-rt', 'test-suite', 'libcxxabi', 'libcxx', 'libunwind']
 llvm_source=os.getcwd()
 cmake_command = 'cmake -DCMAKE_INSTALL_PREFIX={} -DCMAKE_BUILD_TYPE={} -G "Unix Makefiles" {}'
 
 llvm_repo = {'clang': 'https://github.com/llvm-mirror/clang.git',
-        'lldb': 'https://github.com/llvm-mirror/lldb.git',
         'lld': 'https://github.com/llvm-mirror/lld.git',
         'compiler-rt': 'https://github.com/llvm-mirror/compiler-rt.git',
-        'test-suite': 'https://github.com/llvm-mirror/test-suite.git'
+        'test-suite': 'https://github.com/llvm-mirror/test-suite.git',
+        'libcxxabi': 'https://github.com/llvm-mirror/libcxxabi.git',
+        'libcxx': 'https://github.com/llvm-mirror/libcxx.git',
+        'libunwind': 'https://github.com/llvm-mirror/libunwind.git'
         }
 
 def is_lbranch_exist(branch):
