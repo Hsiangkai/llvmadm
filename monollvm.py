@@ -8,10 +8,10 @@ import argparse, shutil, os
 import subprocess
 
 llvm_source=os.getcwd()
-cmake_command = 'cmake -DCMAKE_INSTALL_PREFIX={} \
-                       -DLLVM_TARGETS_TO_BUILD={} \
-                       -DLLVM_ENABLE_PROJECTS={} \
-                       -DCMAKE_BUILD_TYPE={} \
+cmake_command = 'cmake -DCMAKE_INSTALL_PREFIX=\"{}\" \
+                       -DLLVM_TARGETS_TO_BUILD=\"{}\" \
+                       -DLLVM_ENABLE_PROJECTS=\"{}\" \
+                       -DCMAKE_BUILD_TYPE=\"{}\" \
                        -G "Ninja" {}/llvm'
 
 def is_lbranch_exist(branch):
@@ -93,7 +93,7 @@ def build(prefix, buildpath, targets, projects, debug, clean):
     if build_dir_empty:
         subprocess.call(cmake_command.format(prefix, targets, projects, build_type, llvm_source), shell=True)
 
-    subprocess.call("ninja -j2", shell=True)
+    subprocess.call("ninja -j4", shell=True)
     subprocess.call("ninja install", shell=True)
 
     return
@@ -114,7 +114,7 @@ if __name__ == '__main__':
             help='build LLVM')
     sub_parser.add_argument('--prefix', default='$HOME/llvm-dev')
     sub_parser.add_argument('--buildpath', default='build')
-    sub_parser.add_argument('--targets', default='all')
+    sub_parser.add_argument('--targets', default='RISCV;AArch64')
     sub_parser.add_argument('--projects', default='llvm,clang,lld')
     sub_parser.add_argument('--debug', action='store_true')
     sub_parser.add_argument('--clean', action='store_true')
