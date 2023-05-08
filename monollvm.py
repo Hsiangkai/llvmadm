@@ -8,11 +8,16 @@ import argparse, shutil, os
 import subprocess
 
 llvm_source=os.getcwd()
-cmake_command = 'cmake -DCMAKE_INSTALL_PREFIX=\"{}\" \
-                       -DLLVM_TARGETS_TO_BUILD=\"{}\" \
-                       -DLLVM_ENABLE_PROJECTS=\"{}\" \
-                       -DCMAKE_BUILD_TYPE=\"{}\" \
-                       -G "Ninja" {}/llvm'
+cmake_command = 'cmake -DCMAKE_INSTALL_PREFIX=\"{0}\" \
+                       -DLLVM_TARGETS_TO_BUILD=\"{1}\" \
+                       -DLLVM_ENABLE_PROJECTS=\"{2}\" \
+                       -DCMAKE_BUILD_TYPE=\"{3}\" \
+                       -DLLVM_BUILD_EXAMPLES=\"ON\" \
+                       -DLLVM_CCACHE_BUILD=\"ON\" \
+                       -DLLVM_ENABLE_ASSERTIONS=\"ON\" \
+                       -DLLVM_OPTIMIZED_TABLEGEN=\"ON\" \
+                       -DLLVM_INSTALL_UTILS=\"ON\" \
+                       -G "Ninja" {4}/llvm'
 
 def is_lbranch_exist(branch):
     if branch == 'master':
@@ -115,7 +120,7 @@ if __name__ == '__main__':
     sub_parser.add_argument('--prefix', default='$HOME/llvm-dev')
     sub_parser.add_argument('--buildpath', default='build')
     sub_parser.add_argument('--targets', default='RISCV;AArch64')
-    sub_parser.add_argument('--projects', default='llvm,clang,lld')
+    sub_parser.add_argument('--projects', default='clang;lld;mlir')
     sub_parser.add_argument('--debug', action='store_true')
     sub_parser.add_argument('--clean', action='store_true')
 
